@@ -121,7 +121,9 @@ export default function Hero() {
     () => {
       const mm = gsap.matchMedia()
       mm.add(MOTION_OK, () => {
-        const tl = gsap.timeline({ defaults: { ease: 'expo.out' } })
+        // Start only after fonts are ready and the first heavy frames have
+        // painted, so the opening isn't half-skipped by a busy main thread.
+        const tl = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } })
         tl.from('.hero-line', { yPercent: 115, duration: 1.2, stagger: 0.09 })
           .from('.hero-underline', { scaleX: 0, duration: 0.9, ease: 'power4.inOut' }, '-=0.55')
           .from('.hero-fade', { autoAlpha: 0, y: 18, duration: 0.9, stagger: 0.08 }, '-=0.8')
@@ -129,6 +131,20 @@ export default function Hero() {
           .from('.pass-route', { scaleX: 0, duration: 0.9, ease: 'power3.inOut' }, '-=0.7')
           .from('.pass-row', { autoAlpha: 0, x: -10, duration: 0.6, stagger: 0.07 }, '-=0.6')
           .from('.pass-stamp', { scale: 1.9, autoAlpha: 0, rotate: -40, duration: 0.55, ease: 'back.out(2.2)' }, '-=0.15')
+
+        let cancelled = false
+        let raf = 0
+        const go = () => {
+          if (cancelled) return
+          raf = requestAnimationFrame(() => (raf = requestAnimationFrame(() => !cancelled && tl.play())))
+        }
+        const fonts = document.fonts?.ready ?? Promise.resolve()
+        // Never wait more than 1.2s, even if a font is slow.
+        Promise.race([fonts, new Promise((r) => setTimeout(r, 1200))]).then(go)
+        return () => {
+          cancelled = true
+          cancelAnimationFrame(raf)
+        }
       })
     },
     { scope: root },
