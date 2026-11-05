@@ -1,0 +1,85 @@
+@import 'tailwindcss';
+
+/*
+  Static styling only. Every motion on this site is driven by GSAP.
+  CSS here is static styling only.
+*/
+
+@theme {
+  --color-paper: #ffffff;
+  --color-paper-warm: #f6f3ec;
+  --color-ink: #141414;
+  --color-graphite: #1d1d1c;
+  --color-stone: #8a857b;
+  --color-line: #cfc8ba;
+  --color-signal: #ff5a1f;
+  --color-signal-deep: #c63c0b;
+
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-signal);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 3px;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* Lenis: only the static rules this site needs. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+@layer components {
+  /* Unified photographic treatment */
+  .photo {
+    filter: grayscale(1) contrast(1.06) brightness(1.02);
+  }
+
+  /* Ticket perforation */
+  .perforation {
+    background-image: linear-gradient(to right, var(--color-line) 50%, transparent 50%);
+    background-size: 10px 1px;
+    background-repeat: repeat-x;
+    background-position: center;
+  }
+
+  /* Faint document grid used on the case file */
+  .doc-grid {
+    background-image:
+      linear-gradient(to right, rgb(20 20 20 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(20 20 20 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+}
